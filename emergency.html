@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emergency Navigation</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 400px; margin-bottom: 20px; }
+    .hospital-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .hospital-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .hospital-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .hospital-card h3 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .hospital-card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    .hospital-card a:hover {
+      background-color: #2980b9;
+    }
+    #suggestions {
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      width: 300px;
+      position: absolute;
+      background: white;
+      z-index: 1000;
+    }
+    #suggestions div {
+      padding: 5px;
+      cursor: pointer;
+    }
+    #suggestions div:hover {
+      background: #eee;
+    }
+    .controls {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    button {
+      padding: 8px 15px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #27ae60;
+    }
+    select, input {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    .results-info {
+      margin: 10px 0;
+      font-style: italic;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h2>Emergency Navigation</h2>
+
+  <div class="controls">
+    <label>Select range (km): </label>
+    <select id="range-select">
+      <option value="1">1 km</option>
+      <option value="5">5 km</option>
+      <option value="10">10 km</option>
+      <option value="20">20 km</option>
+      <option value="30">30 km</option>
+      <option value="50">50 km</option>
+      <option value="70">70 km</option>
+      <option value="100" selected>100 km</option>
+    </select>
+
+    <p><b>Search by City (optional):</b></p>
+    <input type="text" id="city-search" placeholder="Type city..." autocomplete="off" style="width: 300px;" />
+    <div id="suggestions"></div>
+
+    <button onclick="loadHospitals()" id="findBtn">Find Hospitals</button>
+  </div>
+
+  <div id="map"></div>
+  <div id="results-info" class="results-info"></div>
+  <div class="hospital-container" id="hospital-list"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    let map, marker;
+    let userLat, userLon;
+    let hospitalMarkers = [];
+
+    // Function to calculate distance between two points in km
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radius of the Earth in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c; // Distance in km
+    }
+
+    function initMap(lat, lon) {
+      if (!map) {
+        map = L.map('map').setView([lat, lon], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      } else {
+        map.setView([lat, lon], 13);
+      }
+
+      if (marker) map.removeLayer(marker);
+      marker = L.marker([lat, lon]).addTo(map).bindPopup('Your Location').openPopup();
+    }
+
+    function clearPreviousResults() {
+      // Clear previous markers
+      hospitalMarkers.forEach(marker => map.removeLayer(marker));
+      hospitalMarkers = [];
+      
+      // Clear previous results
+      document.getElementById("hospital-list").innerHTML = '';
+      document.getElementById("results-info").innerHTML = '';
+    }
+
+    function loadHospitals() {
+      const radius = document.getElementById("range-select").value;
+      if (!userLat || !userLon) {
+        alert("Location not available.");
+        return;
+      }
+
+      clearPreviousResults();
+      
+      // Show loading state
+      const hospitalList = document.getElementById("hospital-list");
+      hospitalList.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px;">Loading hospitals...</div>';
+
+      // Fetch hospitals from your API
+      fetch(`/get-hospitals?lat=${userLat}&lon=${userLon}&radius=${radius}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Network response was not ok');
+          return res.json();
+        })
+        .then(data => {
+          hospitalList.innerHTML = "";
+          
+          if (!data || data.length === 0) {
+            document.getElementById("results-info").innerHTML = 'No hospitals found within selected range. Try increasing the search radius.';
+            return;
+          }
+
+          // Sort hospitals by distance (closest first)
+          data.sort((a, b) => {
+            const distA = calculateDistance(userLat, userLon, a.lat, a.lon);
+            const distB = calculateDistance(userLat, userLon, b.lat, b.lon);
+            return distA - distB;
+          });
+
+          // Display results count
+          document.getElementById("results-info").innerHTML = `Found ${data.length} hospitals within ${radius} km radius:`;
+
+          // Process each hospital
+          data.forEach(h => {
+            // Calculate distance from user to hospital
+            const distance = calculateDistance(userLat, userLon, h.lat, h.lon);
+            
+            // Add marker to map
+            const hospitalMarker = L.marker([h.lat, h.lon]).addTo(map)
+              .bindPopup(`<b>${h.name}</b><br>Distance: ${distance.toFixed(2)} km`);
+            hospitalMarkers.push(hospitalMarker);
+            
+            // Create hospital card
+            const card = document.createElement("div");
+            card.className = "hospital-card";
+            card.innerHTML = `
+              <h3>${h.name}</h3>
+              <p>Distance: ${distance.toFixed(2)} km</p>
+              ${h.address ? `<p>${h.address}</p>` : ''}
+              ${h.phone ? `<p>Phone: ${h.phone}</p>` : ''}
+              <a href="https://www.google.com/maps?q=${h.lat},${h.lon}" target="_blank">Get Directions</a>
+            `;
+            hospitalList.appendChild(card);
+          });
+
+          // Adjust map view to show all markers
+          if (data.length > 0) {
+            const markerGroup = new L.featureGroup(hospitalMarkers);
+            map.fitBounds(markerGroup.getBounds().pad(0.1));
+          }
+        })
+        .catch(error => {
+          hospitalList.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: red;">Error loading hospitals. Please try again.</div>';
+          console.error("Error fetching hospitals:", error);
+        });
+    }
+
+    // Get location + reverse geocode
+    function detectUserLocation() {
+      if (!navigator.geolocation) {
+        alert("Geolocation not supported");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          userLat = pos.coords.latitude;
+          userLon = pos.coords.longitude;
+          initMap(userLat, userLon);
+          reverseGeocode(userLat, userLon);
+        },
+        err => {
+          alert("Please enable location permission");
+          // Default to a location if geolocation fails (for demo)
+          userLat = 28.6139; // Default latitude (Delhi)
+          userLon = 77.2090; // Default longitude (Delhi)
+          initMap(userLat, userLon);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    function reverseGeocode(lat, lon) {
+      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+        .then(res => res.json())
+        .then(data => {
+          const city = data.address.city || data.address.town || data.address.village || data.address.hamlet || '';
+          if (city) document.getElementById("city-search").value = city;
+        });
+    }
+
+    // Autocomplete for city search
+    const searchInput = document.getElementById("city-search");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.trim();
+      if (query.length < 2) {
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1&countrycodes=in&featuretype=city`)
+        .then(res => res.json())
+        .then(data => {
+          suggestionsBox.innerHTML = '';
+          data.forEach(place => {
+            const div = document.createElement("div");
+            div.textContent = place.display_name;
+            div.onclick = () => {
+              userLat = parseFloat(place.lat);
+              userLon = parseFloat(place.lon);
+              searchInput.value = place.display_name;
+              suggestionsBox.innerHTML = '';
+              initMap(userLat, userLon);
+            };
+            suggestionsBox.appendChild(div);
+          });
+        });
+    });
+
+    // Hide autocomplete on outside click
+    document.addEventListener("click", (e) => {
+      if (!searchInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.innerHTML = '';
+      }
+    });
+
+    // Load current location on start
+    window.onload = detectUserLocation;
+  </script>
+</body>
+</html>

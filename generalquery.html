@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Assistant Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --white: #ffffff;
+            --chat-bg: #f5f7ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--chat-bg);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-weight: 300;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-header i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .chat-header h2 {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 15px;
+            border-radius: 15px;
+            line-height: 1.5;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--primary);
+            color: var(--white);
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: var(--light);
+            color: var(--dark);
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            background: var(--light);
+            color: var(--dark);
+            padding: 10px 15px;
+            border-radius: 15px;
+            border-bottom-left-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background: var(--white);
+            border-top: 1px solid #eee;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #userInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+        }
+
+        #sendButton {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sendButton:hover {
+            background: #3a5bef;
+            transform: scale(1.05);
+        }
+
+        .disclaimer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--secondary);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Health Assistant</h1>
+            <p class="subtitle">Ask me anything about your health concerns</p>
+        </header>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <i class="fas fa-robot"></i>
+                <h2>HealthBot</h2>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will appear here -->
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your health question here..." autocomplete="off">
+                <button id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <p class="disclaimer">
+            Note: This is an AI health assistant. For serious medical concerns, please consult a healthcare professional.
+        </p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            // Health knowledge dataset
+            const healthKnowledge = {
+                "headache": {
+                    response: "Headaches can have many causes. Common remedies include drinking water, resting in a quiet dark room, and over-the-counter pain relievers like ibuprofen. If headaches are severe or frequent, consult a doctor.",
+                    followup: "Are you experiencing any other symptoms with your headache?"
+                },
+                "fever": {
+                    response: "Fever is often a sign of infection. For adults, rest and fluids are usually sufficient for mild fevers. If temperature is above 103°F (39.4°C) or lasts more than 3 days, seek medical attention.",
+                    followup: "How high is your temperature and how long have you had it?"
+                },
+                "cough": {
+                    response: "Coughs can be caused by colds, allergies, or infections. Stay hydrated and consider honey for throat irritation. If cough persists more than 2 weeks or is accompanied by difficulty breathing, see a doctor.",
+                    followup: "Is your cough dry or producing mucus?"
+                },
+                "back pain": {
+                    response: "For mild back pain, try gentle stretching, heat/cold therapy, and over-the-counter pain relievers. Avoid heavy lifting. If pain is severe, radiates down legs, or follows an injury, seek medical evaluation.",
+                    followup: "How long have you had this back pain?"
+                },
+                "sore throat": {
+                    response: "Sore throats are often viral. Gargle with warm salt water, stay hydrated, and use throat lozenges. If symptoms last more than a week or include difficulty swallowing, see a doctor.",
+                    followup: "Do you have swollen glands or white patches in your throat?"
+                },
+                "fatigue": {
+                    response: "Fatigue can result from poor sleep, stress, or nutritional deficiencies. Ensure 7-9 hours of sleep, balanced diet, and regular exercise. If fatigue persists despite lifestyle changes, consult a doctor.",
+                    followup: "How long have you been experiencing fatigue?"
+                },
+                "default": {
+                    response: "I'm an AI health assistant. While I can provide general health information, I can't diagnose conditions. For specific medical advice, please consult a healthcare professional. How can I help you today?",
+                    followup: "Can you tell me more about your symptoms?"
+                }
+            };
+
+            // Initialize chat with welcome message
+            addBotMessage("Hello! I'm your Health Assistant. You can ask me about common health concerns, symptoms, or general wellness advice. What would you like to know?");
+
+            // Load previous conversation from localStorage
+            loadConversation();
+
+            // Send message when button is clicked
+            sendButton.addEventListener('click', sendMessage);
+
+            // Send message when Enter is pressed
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+
+                // Add user message to chat
+                addUserMessage(message);
+                userInput.value = '';
+
+                // Show typing indicator
+                showTypingIndicator();
+
+                // Process after a short delay to simulate thinking
+                setTimeout(() => {
+                    // Remove typing indicator
+                    removeTypingIndicator();
+
+                    // Generate and add bot response
+                    const response = generateResponse(message);
+                    addBotMessage(response);
+
+                    // Save conversation to localStorage
+                    saveConversation();
+                }, 1500);
+            }
+
+            function addUserMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user-message';
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function addBotMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot-message';
+                messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+                chatMessages.appendChild(messageDiv);
+                scrollToBottom();
+            }
+
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                `;
+                chatMessages.appendChild(typingDiv);
+                scrollToBottom();
+            }
+
+            function removeTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function generateResponse(userMessage) {
+                // Convert to lowercase for easier matching
+                const lowerMessage = userMessage.toLowerCase();
+                
+                // Check for specific health topics in the message
+                for (const [topic, data] of Object.entries(healthKnowledge)) {
+                    if (lowerMessage.includes(topic)) {
+                        return `${data.response}\n\n${data.followup}`;
+                    }
+                }
+                
+                // If no specific topic matched, provide default response
+                return healthKnowledge.default.response;
+            }
+
+            function saveConversation() {
+                const messages = [];
+                document.querySelectorAll('.chat-messages .message').forEach(msg => {
+                    messages.push({
+                        text: msg.textContent || msg.innerText,
+                        type: msg.classList.contains('user-message') ? 'user' : 'bot'
+                    });
+                });
+                localStorage.setItem('healthChatConversation', JSON.stringify(messages));
+            }
+
+            function loadConversation() {
+                const savedConversation = localStorage.getItem('healthChatConversation');
+                if (savedConversation) {
+                    const messages = JSON.parse(savedConversation);
+                    messages.forEach(msg => {
+                        if (msg.type === 'user') {
+                            addUserMessage(msg.text);
+                        } else {
+                            addBotMessage(msg.text);
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

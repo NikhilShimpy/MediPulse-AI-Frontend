@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - MediPulse AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2a7fba;
+      --secondary-color: #f5f7fa;
+      --accent-color: #f44336;
+      --text-color: #333;
+      --light-text: #555;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    /* Header Styles */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+    }
+    
+    nav ul {
+      display: flex;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    
+    nav ul li {
+      margin-left: 1.5rem;
+    }
+    
+    nav ul li a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s;
+    }
+    
+    nav ul li a:hover {
+      color: var(--primary-color);
+    }
+    
+    nav ul li a i {
+      margin-right: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .active {
+      color: var(--primary-color) !important;
+      font-weight: 600;
+    }
+    
+    /* Main Content Styles */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+      flex: 1;
+    }
+    
+    .welcome-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+      margin: 0;
+    }
+    
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .card h2 i {
+      margin-right: 10px;
+    }
+    
+    .card p {
+      margin: 0;
+      color: var(--light-text);
+    }
+    
+    .dashboard-info {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background-color: #e8f4fc;
+      border-radius: 8px;
+      color: var(--primary-color);
+      text-align: center;
+    }
+    
+    /* Footer Styles */
+    footer {
+      background-color: #fff;
+      padding: 2rem;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      margin-top: auto;
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+    
+    .footer-section h3 {
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+    
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-section ul li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-section ul li a {
+      text-decoration: none;
+      color: var(--light-text);
+      transition: color 0.3s;
+    }
+    
+    .footer-section ul li a:hover {
+      color: var(--primary-color);
+    }
+    
+    .social-icons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-icons a {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+    
+    .copyright {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+      color: var(--light-text);
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        padding: 1rem;
+      }
+      
+      nav ul {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      nav ul li {
+        margin: 0.5rem;
+      }
+      
+      .welcome-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <i class="fas fa-heartbeat"></i>
+      <span>MediPulse AI</span>
+    </div>
+    <ul>
+      <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="/about"><i class="fas fa-info-circle"></i> About Us</a></li>
+
+      <li><a href="/blog"><i class="fas fa-blog"></i> Blog</a></li>
+      <li><a href="/pricing"><i class="fas fa-tag"></i> Pricing</a></li>
+      <li><a href="/dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="/account"><i class="fas fa-user-circle"></i> Account</a></li>
+      <li><a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    </ul>
+  </nav>
+  
+  <div class="container">
+    <div class="welcome-header">
+      <h1>Welcome, {{ user }}!</h1>
+    </div>
+    
+    <div class="cards">
+      <a href="#" class="card">
+        <h2><i class="fas fa-history"></i> Medical History</h2>
+        <p>View your health records</p>
+      </a>
+      
+      <a href="{{ url_for('medical_query') }}" class="card">
+        <h2><i class="fas fa-question-circle"></i> Medical Query</h2>
+        <p>Ask health questions</p>
+      </a>
+      
+      <a href="#" class="card">
+        <h2><i class="fas fa-user-cog"></i> Profile</h2>
+        <p>Manage your account</p>
+      </a>
+      
+      <a href="/book-appointment" class="card">
+        <h2><i class="fas fa-calendar-check"></i> Book Appointment</h2>
+        <p>Schedule with AI</p>
+      </a>
+      
+      <a href="/emergency" class="card">
+        <h2><i class="fas fa-ambulance"></i> Emergency Navigation</h2>
+        <p>Find help fast</p>
+      </a>
+      
+      <a href="/disease-detection" class="card">
+        <h2><i class="fas fa-diagnoses"></i> Disease Detection</h2>
+        <p>Analyze images</p>
+      </a>
+      
+      <a href="{{ url_for('general_query') }}" class="card">
+        <h2><i class="fas fa-comments"></i> General Query</h2>
+        <p>Ask anything</p>
+      </a>
+
+    </div>
+    
+    <div class="dashboard-info">
+      <p>This is your personalized dashboard. Use the cards above to explore MediPulse AI's features tailored to your health needs.</p>
+    </div>
+  </div>
+  
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>MediPulse AI</h3>
+        <p>Your AI-powered companion for smarter healthcare—connecting patients, providers, and insights seamlessly.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/disease-detection">Disease Detection</a></li>
+          <li><a href="/emergency">Emergency Services</a></li>
+          <li><a href="/appointments">Appointments</a></li>
+          <li><a href="/medical-records">Medical Records</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Contact</h3>
+        <ul>
+          <li><i class="fas fa-map-marker-alt"></i> 123 Health St, MedCity</li>
+          <li><i class="fas fa-phone"></i> (123) 456-7890</li>
+          <li><i class="fas fa-envelope"></i> nikhilshimpyworking@gmail.com</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="copyright">
+      <p>&copy; 2025 MediPulse AI. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

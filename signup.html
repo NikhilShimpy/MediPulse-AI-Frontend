@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | MediPulse AI</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* Same styles as login page */
+    :root {
+      --primary-color: #2a7fba;
+      --secondary-color: #f5f7fa;
+      --accent-color: #f44336;
+      --text-color: #333;
+      --light-text: #555;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--secondary-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+      overflow-x: hidden;
+    }
+    
+    .container {
+      display: flex;
+      width: 90%;
+      max-width: 1200px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      border-radius: 15px;
+      overflow: hidden;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    
+    .illustration {
+      flex: 1;
+      background: linear-gradient(135deg, var(--primary-color) 0%, #1e6ea7 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .illustration::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      transform: rotate(30deg);
+      animation: pulse 15s infinite linear;
+    }
+    
+    .illustration img {
+      width: 80%;
+      max-width: 400px;
+      margin-bottom: 2rem;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .illustration h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    
+    .illustration p {
+      text-align: center;
+      opacity: 0.9;
+    }
+    
+    .form-container {
+      flex: 1;
+      background-color: white;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .logo i {
+      margin-right: 10px;
+      font-size: 1.8rem;
+    }
+    
+    h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .form-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light-text);
+    }
+    
+    input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(42, 127, 186, 0.2);
+      outline: none;
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    
+    button:hover {
+      background-color: #1e6ea7;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(42, 127, 186, 0.3);
+    }
+    
+    .alternate-action {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--light-text);
+    }
+    
+    .alternate-action a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .alternate-action a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: rotate(30deg) translateX(0) translateY(0); }
+      25% { transform: rotate(30deg) translateX(-50px) translateY(-50px); }
+      50% { transform: rotate(30deg) translateX(0) translateY(-100px); }
+      75% { transform: rotate(30deg) translateX(50px) translateY(-50px); }
+      100% { transform: rotate(30deg) translateX(0) translateY(0); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      .illustration {
+        padding: 2rem 1rem;
+      }
+      
+      .illustration img {
+        width: 60%;
+      }
+      
+      .form-container {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="illustration">
+      <img src="https://cdn-icons-png.flaticon.com/512/3022/3022855.png" alt="HealthSync AI Signup Illustration">
+      <h1>Join MediPulse AI</h1>
+      <p>Create your account to unlock personalized healthcare insights and AI-powered features.</p>
+    </div>
+    
+    <div class="form-container">
+      <div class="logo">
+        <i class="fas fa-heartbeat"></i>
+        <span>MediPulse AI</span>
+      </div>
+      
+      <h2>Create Your Account</h2>
+      
+      <form method="POST">
+        <div class="form-group">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" placeholder="Email" required>
+        </div>
+        
+        <div class="form-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" placeholder="Password" required>
+        </div>
+        
+        <button type="submit">Sign Up</button>
+      </form>
+      
+      <div class="alternate-action">
+        <p>Already have an account? <a href="/login">Login</a></p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

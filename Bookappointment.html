@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Doctor Appointment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-weight: 300;
+        }
+
+        .booking-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            animation: slideUp 0.8s ease;
+        }
+
+        .booking-form {
+            flex: 1;
+            min-width: 300px;
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .booking-form:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            background: var(--light);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            background: #e9ecef;
+        }
+
+        .time-slot.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .time-slot.booked {
+            background: #ffebee;
+            color: var(--danger);
+            border-color: #ffcdd2;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .time-slot.booked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--danger);
+            transform: rotate(-15deg);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #3a5bef;
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .booking-summary {
+            flex: 1;
+            min-width: 300px;
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            animation: fadeIn 1s ease 0.3s both;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .summary-label {
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .total {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .confirmation {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .confirmation i {
+            font-size: 5rem;
+            color: var(--success);
+            margin-bottom: 1.5rem;
+            animation: bounce 1s ease infinite;
+        }
+
+        .confirmation h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--success);
+        }
+
+        .confirmation p {
+            margin-bottom: 2rem;
+            color: var(--secondary);
+        }
+
+        .download-btn {
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #3a5bef;
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .booking-container {
+                flex-direction: column;
+            }
+            
+            .booking-summary {
+                position: static;
+            }
+        }
+
+        /* Pulse animation for booking button */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(74, 107, 255, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(74, 107, 255, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(74, 107, 255, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Book Your Doctor Appointment</h1>
+            <p class="subtitle">Schedule your visit with our expert healthcare professionals</p>
+        </header>
+
+        <div class="booking-container">
+            <div class="booking-form" id="bookingForm">
+                <div class="form-group">
+                    <label for="hospital">Select Hospital</label>
+                    <select id="hospital" class="form-control" required>
+                        <option value="">-- Select Hospital --</option>
+                        <option value="city-general">City General Hospital</option>
+                        <option value="metro-medical">Metro Medical Center</option>
+                        <option value="sunshine-clinic">Sunshine Specialty Clinic</option>
+                        <option value="university-hospital">University Teaching Hospital</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <select id="department" class="form-control" required>
+                        <option value="">-- Select Department --</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="neurology">Neurology</option>
+                        <option value="orthopedics">Orthopedics</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="dermatology">Dermatology</option>
+                        <option value="ophthalmology">Ophthalmology</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="doctor">Select Doctor</label>
+                    <select id="doctor" class="form-control" required>
+                        <option value="">-- Select Doctor --</option>
+                        <!-- Doctors will be populated based on department selection -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientName">Your Full Name</label>
+                    <input type="text" id="patientName" class="form-control" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientEmail">Email Address</label>
+                    <input type="email" id="patientEmail" class="form-control" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="patientPhone">Phone Number</label>
+                    <input type="tel" id="patientPhone" class="form-control" placeholder="Enter your phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appointmentDate">Appointment Date</label>
+                    <input type="date" id="appointmentDate" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Available Time Slots</label>
+                    <div class="time-slots" id="timeSlots">
+                        <!-- Time slots will be generated dynamically -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="symptoms">Symptoms/Reason for Visit</label>
+                    <textarea id="symptoms" class="form-control" rows="3" placeholder="Briefly describe your symptoms or reason for visit"></textarea>
+                </div>
+
+                <button id="bookBtn" class="btn btn-primary btn-block pulse">Book Appointment</button>
+            </div>
+
+            <div class="booking-summary" id="bookingSummary">
+                <h3 class="summary-title">Appointment Summary</h3>
+                <div class="summary-item">
+                    <span class="summary-label">Hospital:</span>
+                    <span class="summary-value" id="summaryHospital">Not selected</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Department:</span>
+                    <span class="summary-value" id="summaryDepartment">Not selected</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Doctor:</span>
+                    <span class="summary-value" id="summaryDoctor">Not selected</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Date:</span>
+                    <span class="summary-value" id="summaryDate">Not selected</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Time:</span>
+                    <span class="summary-value" id="summaryTime">Not selected</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Patient:</span>
+                    <span class="summary-value" id="summaryPatient">Not provided</span>
+                </div>
+                <div class="summary-item total">
+                    <span class="summary-label">Consultation Fee:</span>
+                    <span class="summary-value" id="summaryFee">$0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="confirmation" id="confirmation">
+            <i class="fas fa-check-circle"></i>
+            <h2>Appointment Booked Successfully!</h2>
+            <p>Your appointment has been confirmed. You will receive a confirmation email shortly.</p>
+            <button id="downloadBtn" class="download-btn">
+                <i class="fas fa-download"></i> Download Appointment Details
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const bookingForm = document.getElementById('bookingForm');
+            const bookingSummary = document.getElementById('bookingSummary');
+            const confirmation = document.getElementById('confirmation');
+            const bookBtn = document.getElementById('bookBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // Form elements
+            const hospitalSelect = document.getElementById('hospital');
+            const departmentSelect = document.getElementById('department');
+            const doctorSelect = document.getElementById('doctor');
+            const patientName = document.getElementById('patientName');
+            const patientEmail = document.getElementById('patientEmail');
+            const patientPhone = document.getElementById('patientPhone');
+            const appointmentDate = document.getElementById('appointmentDate');
+            const timeSlots = document.getElementById('timeSlots');
+            const symptoms = document.getElementById('symptoms');
+            
+            // Summary elements
+            const summaryHospital = document.getElementById('summaryHospital');
+            const summaryDepartment = document.getElementById('summaryDepartment');
+            const summaryDoctor = document.getElementById('summaryDoctor');
+            const summaryDate = document.getElementById('summaryDate');
+            const summaryTime = document.getElementById('summaryTime');
+            const summaryPatient = document.getElementById('summaryPatient');
+            const summaryFee = document.getElementById('summaryFee');
+
+            // Doctor data
+            const doctors = {
+                cardiology: [
+                    { id: 'dr-smith', name: 'Dr. John Smith', fee: 150 },
+                    { id: 'dr-johnson', name: 'Dr. Sarah Johnson', fee: 175 }
+                ],
+                neurology: [
+                    { id: 'dr-williams', name: 'Dr. Michael Williams', fee: 200 },
+                    { id: 'dr-brown', name: 'Dr. Emily Brown', fee: 180 }
+                ],
+                orthopedics: [
+                    { id: 'dr-jones', name: 'Dr. Robert Jones', fee: 160 },
+                    { id: 'dr-garcia', name: 'Dr. Maria Garcia', fee: 170 }
+                ],
+                pediatrics: [
+                    { id: 'dr-miller', name: 'Dr. David Miller', fee: 140 },
+                    { id: 'dr-davis', name: 'Dr. Jennifer Davis', fee: 150 }
+                ],
+                dermatology: [
+                    { id: 'dr-rodriguez', name: 'Dr. James Rodriguez', fee: 130 },
+                    { id: 'dr-martinez', name: 'Dr. Patricia Martinez', fee: 145 }
+                ],
+                ophthalmology: [
+                    { id: 'dr-wilson', name: 'Dr. Thomas Wilson', fee: 155 },
+                    { id: 'dr-anderson', name: 'Dr. Linda Anderson', fee: 165 }
+                ]
+            };
+
+            // Booked appointments (simulated data)
+            const bookedAppointments = {
+                'dr-smith': ['2023-11-15T09:00:00', '2023-11-15T10:30:00'],
+                'dr-johnson': ['2023-11-15T11:00:00'],
+                'dr-williams': ['2023-11-16T14:00:00']
+            };
+
+            // Set minimum date to today
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const yyyy = today.getFullYear();
+            appointmentDate.min = `${yyyy}-${mm}-${dd}`;
+
+            // Event listeners
+            hospitalSelect.addEventListener('change', updateSummary);
+            departmentSelect.addEventListener('change', function() {
+                updateDoctors();
+                updateSummary();
+            });
+            doctorSelect.addEventListener('change', updateSummary);
+            patientName.addEventListener('input', updateSummary);
+            appointmentDate.addEventListener('change', function() {
+                generateTimeSlots();
+                updateSummary();
+            });
+            bookBtn.addEventListener('click', bookAppointment);
+            downloadBtn.addEventListener('click', downloadAppointment);
+
+            // Update doctors based on department selection
+            function updateDoctors() {
+                const department = departmentSelect.value;
+                doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+                
+                if (department && doctors[department]) {
+                    doctors[department].forEach(doctor => {
+                        const option = document.createElement('option');
+                        option.value = doctor.id;
+                        option.textContent = doctor.name;
+                        option.setAttribute('data-fee', doctor.fee);
+                        doctorSelect.appendChild(option);
+                    });
+                }
+            }
+
+            // Generate time slots (30-minute intervals from 9am to 5pm)
+            function generateTimeSlots() {
+                timeSlots.innerHTML = '';
+                if (!appointmentDate.value || !doctorSelect.value) return;
+
+                const startHour = 9; // 9am
+                const endHour = 17; // 5pm
+                const interval = 30; // minutes
+
+                for (let hour = startHour; hour < endHour; hour++) {
+                    for (let minute = 0; minute < 60; minute += interval) {
+                        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                        const slot = document.createElement('div');
+                        slot.className = 'time-slot';
+                        slot.textContent = timeString;
+                        
+                        // Check if this time is booked
+                        const slotDateTime = new Date(`${appointmentDate.value}T${timeString}:00`);
+                        const doctorId = doctorSelect.value;
+                        
+                        if (isBooked(doctorId, slotDateTime)) {
+                            slot.classList.add('booked');
+                            slot.title = 'This slot is already booked';
+                        } else {
+                            slot.addEventListener('click', function() {
+                                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                                this.classList.add('selected');
+                                updateSummary();
+                            });
+                        }
+                        
+                        timeSlots.appendChild(slot);
+                    }
+                }
+            }
+
+            // Check if a time slot is booked
+            function isBooked(doctorId, dateTime) {
+                if (!bookedAppointments[doctorId]) return false;
+                
+                return bookedAppointments[doctorId].some(appt => {
+                    const apptDate = new Date(appt);
+                    return apptDate.getTime() === dateTime.getTime();
+                });
+            }
+
+            // Update booking summary
+            function updateSummary() {
+                summaryHospital.textContent = hospitalSelect.options[hospitalSelect.selectedIndex].text || 'Not selected';
+                summaryDepartment.textContent = departmentSelect.options[departmentSelect.selectedIndex].text || 'Not selected';
+                summaryDoctor.textContent = doctorSelect.options[doctorSelect.selectedIndex].text || 'Not selected';
+                summaryDate.textContent = appointmentDate.value ? new Date(appointmentDate.value).toDateString() : 'Not selected';
+                
+                const selectedTime = document.querySelector('.time-slot.selected');
+                summaryTime.textContent = selectedTime ? selectedTime.textContent : 'Not selected';
+                
+                summaryPatient.textContent = patientName.value || 'Not provided';
+                
+                // Update fee
+                if (doctorSelect.selectedIndex > 0) {
+                    const fee = doctorSelect.options[doctorSelect.selectedIndex].getAttribute('data-fee');
+                    summaryFee.textContent = `$${fee}`;
+                } else {
+                    summaryFee.textContent = '$0';
+                }
+            }
+
+            // Book appointment
+            function bookAppointment(e) {
+                e.preventDefault();
+                
+                // Validate form
+                if (!hospitalSelect.value || !departmentSelect.value || !doctorSelect.value || 
+                    !patientName.value || !patientEmail.value || !patientPhone.value || 
+                    !appointmentDate.value || !document.querySelector('.time-slot.selected')) {
+                    alert('Please fill in all required fields and select a time slot');
+                    return;
+                }
+
+                // Validate email
+                if (!validateEmail(patientEmail.value)) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+
+                // Validate phone
+                if (!validatePhone(patientPhone.value)) {
+                    alert('Please enter a valid phone number');
+                    return;
+                }
+
+                // Show confirmation
+                bookingForm.style.display = 'none';
+                bookingSummary.style.display = 'none';
+                confirmation.style.display = 'block';
+            }
+
+            // Download appointment as PDF
+            function downloadAppointment() {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add logo or header
+                doc.setFontSize(22);
+                doc.setTextColor(74, 107, 255);
+                doc.text('Appointment Confirmation', 105, 20, { align: 'center' });
+                
+                // Add hospital info
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`${summaryHospital.textContent}`, 105, 35, { align: 'center' });
+                doc.text('123 Medical Center Drive, City, State 12345', 105, 40, { align: 'center' });
+                doc.text('Phone: (123) 456-7890 | Email: info@hospital.com', 105, 45, { align: 'center' });
+                
+                // Add line separator
+                doc.setDrawColor(74, 107, 255);
+                doc.setLineWidth(0.5);
+                doc.line(20, 50, 190, 50);
+                
+                // Add appointment details
+                doc.setFontSize(14);
+                doc.text('Appointment Details:', 20, 60);
+                
+                doc.setFontSize(12);
+                doc.text(`Patient Name: ${summaryPatient.textContent}`, 20, 70);
+                doc.text(`Appointment Date: ${summaryDate.textContent}`, 20, 80);
+                doc.text(`Appointment Time: ${summaryTime.textContent}`, 20, 90);
+                doc.text(`Department: ${summaryDepartment.textContent}`, 20, 100);
+                doc.text(`Doctor: ${summaryDoctor.textContent}`, 20, 110);
+                doc.text(`Consultation Fee: ${summaryFee.textContent}`, 20, 120);
+                
+                // Add symptoms if provided
+                if (symptoms.value) {
+                    doc.text('Reason for Visit:', 20, 130);
+                    doc.text(symptoms.value, 20, 140, { maxWidth: 170 });
+                }
+                
+                // Add footer
+                doc.setFontSize(10);
+                doc.setTextColor(100, 100, 100);
+                doc.text('Please arrive 15 minutes before your appointment time.', 105, 270, { align: 'center' });
+                doc.text('Bring your insurance card and photo ID.', 105, 275, { align: 'center' });
+                doc.text('Generated on ' + new Date().toLocaleString(), 105, 285, { align: 'center' });
+                
+                // Save the PDF
+                doc.save(`Appointment_${summaryPatient.textContent.replace(' ', '_')}_${summaryDate.textContent.replace(/ /g, '_')}.pdf`);
+            }
+
+            // Helper functions
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            function validatePhone(phone) {
+                const re = /^[\d\s\-\(\)]{10,}$/;
+                return re.test(phone);
+            }
+
+            // Initialize
+            updateSummary();
+        });
+    </script>
+</body>
+</html>

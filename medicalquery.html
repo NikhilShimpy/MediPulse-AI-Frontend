@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Report Analyzer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+        
+        .container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .upload-section, .results-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upload-box {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .upload-box:hover {
+            background-color: #f0f8ff;
+        }
+        
+        .upload-box i {
+            font-size: 48px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .upload-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .selected-file {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .report-type {
+            margin-top: 20px;
+        }
+        
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-top: 5px;
+        }
+        
+        .analyze-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .analyze-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .report-summary {
+            margin-bottom: 30px;
+            background-color: #e8f4fc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .report-summary h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .qa-section {
+            margin-top: 30px;
+        }
+        
+        .question-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .ask-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .ask-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .conversation {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+        
+        .bot-message {
+            background-color: #f1f1f1;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+        
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .parameter-table th, .parameter-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .parameter-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .parameter-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .normal {
+            color: #2ecc71;
+        }
+        
+        .abnormal {
+            color: #e74c3c;
+        }
+        
+        .attention {
+            color: #f39c12;
+        }
+        
+        .download-btn {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .download-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-file-medical"></i> Medical Report Analyzer</h1>
+        <p>Upload your medical reports and get easy-to-understand explanations</p>
+    </header>
+    
+    <div class="container">
+        <div class="upload-section">
+            <h2>Upload Your Medical Report</h2>
+            <p>Get clear explanations of your test results in simple language</p>
+            
+            <div class="upload-box" id="dropZone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag & drop your medical report here or</p>
+                <button class="upload-btn" id="uploadBtn">Select File</button>
+                <input type="file" id="fileInput" class="file-input" accept=".pdf,.jpg,.jpeg,.png,.txt">
+                <div class="selected-file" id="selectedFile">No file selected</div>
+            </div>
+            
+            <div class="report-type">
+                <label for="reportType">Type of Report:</label>
+                <select id="reportType">
+                    <option value="blood">Blood Test Report</option>
+                    <option value="sugar">Diabetes/Sugar Report</option>
+                    <option value="urine">Urine Test Report</option>
+                    <option value="lipid">Lipid Profile</option>
+                    <option value="liver">Liver Function Test</option>
+                    <option value="kidney">Kidney Function Test</option>
+                    <option value="thyroid">Thyroid Test</option>
+                    <option value="other">Other Medical Report</option>
+                </select>
+            </div>
+            
+            <button class="analyze-btn" id="analyzeBtn">Analyze Report</button>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Analyzing your report...</p>
+            </div>
+        </div>
+        
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h2>Report Analysis</h2>
+            
+            <div class="report-summary" id="reportSummary">
+                <h3>Summary</h3>
+                <div id="summaryContent"></div>
+                
+                <h3 style="margin-top: 20px;">Key Parameters</h3>
+                <div id="parametersTable"></div>
+            </div>
+            
+            <div class="qa-section">
+                <h3>Ask About Your Report</h3>
+                <p>Have questions about your results? Ask anything below:</p>
+                
+                <input type="text" class="question-input" id="questionInput" placeholder="Type your question here...">
+                <button class="ask-btn" id="askBtn">Ask Question</button>
+                
+                <div class="conversation" id="conversation"></div>
+            </div>
+            
+            <button class="download-btn" id="downloadBtn">
+                <i class="fas fa-download"></i> Download Analysis
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fileInput = document.getElementById('fileInput');
+            const dropZone = document.getElementById('dropZone');
+            const selectedFile = document.getElementById('selectedFile');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultsSection = document.getElementById('resultsSection');
+            const summaryContent = document.getElementById('summaryContent');
+            const parametersTable = document.getElementById('parametersTable');
+            const questionInput = document.getElementById('questionInput');
+            const askBtn = document.getElementById('askBtn');
+            const conversation = document.getElementById('conversation');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const reportType = document.getElementById('reportType');
+            
+            let currentFile = null;
+            let reportAnalysis = null;
+            
+            // Event listeners
+            uploadBtn.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '#f0f8ff';
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.backgroundColor = '';
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.backgroundColor = '';
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect({ target: fileInput });
+                }
+            });
+            
+            analyzeBtn.addEventListener('click', analyzeReport);
+            askBtn.addEventListener('click', askQuestion);
+            questionInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') askQuestion();
+            });
+            downloadBtn.addEventListener('click', downloadAnalysis);
+            
+            // Functions
+            function handleFileSelect(event) {
+                if (event.target.files.length > 0) {
+                    currentFile = event.target.files[0];
+                    selectedFile.textContent = `Selected: ${currentFile.name}`;
+                }
+            }
+            
+            function analyzeReport() {
+                if (!currentFile) {
+                    alert('Please select a file first');
+                    return;
+                }
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'block';
+                
+                // Simulate API call (in a real app, you would send the file to your backend)
+                setTimeout(() => {
+                    // This is where you would normally send the file to your server
+                    // For this demo, we'll use mock data based on the report type
+                    const type = reportType.value;
+                    reportAnalysis = generateMockAnalysis(type);
+                    
+                    // Display results
+                    displayAnalysis(reportAnalysis);
+                    
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Show results section
+                    resultsSection.style.display = 'block';
+                }, 2000);
+            }
+            
+            function displayAnalysis(analysis) {
+                // Display summary
+                summaryContent.innerHTML = analysis.summary;
+                
+                // Display parameters table
+                if (analysis.parameters && analysis.parameters.length > 0) {
+                    let tableHTML = `
+                        <table class="parameter-table">
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Your Value</th>
+                                    <th>Normal Range</th>
+                                    <th>Status</th>
+                                    <th>Explanation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    analysis.parameters.forEach(param => {
+                        let statusClass = '';
+                        if (param.status === 'Normal') statusClass = 'normal';
+                        else if (param.status === 'Abnormal') statusClass = 'abnormal';
+                        else if (param.status === 'Needs Attention') statusClass = 'attention';
+                        
+                        tableHTML += `
+                            <tr>
+                                <td><strong>${param.name}</strong></td>
+                                <td>${param.value}</td>
+                                <td>${param.range}</td>
+                                <td class="${statusClass}">${param.status}</td>
+                                <td>${param.explanation}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHTML += `
+                            </tbody>
+                        </table>
+                    `;
+                    
+                    parametersTable.innerHTML = tableHTML;
+                } else {
+                    parametersTable.innerHTML = '<p>No specific parameters to display for this report type.</p>';
+                }
+                
+                // Clear any previous conversation
+                conversation.innerHTML = '';
+                
+                // Add welcome message
+                addBotMessage("Hello! I've analyzed your medical report. You can ask me any questions about your results.");
+            }
+            
+            function askQuestion() {
+                const question = questionInput.value.trim();
+                if (!question) return;
+                
+                // Add user question to conversation
+                addUserMessage(question);
+                questionInput.value = '';
+                
+                // Simulate processing
+                setTimeout(() => {
+                    // In a real app, you would send the question to your backend along with the report context
+                    const answer = generateMockAnswer(question, reportAnalysis.type);
+                    addBotMessage(answer);
+                }, 1000);
+            }
+            
+            function addUserMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message user-message';
+                messageDiv.textContent = text;
+                conversation.appendChild(messageDiv);
+                conversation.scrollTop = conversation.scrollHeight;
+            }
+            
+            function addBotMessage(text) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot-message';
+                messageDiv.innerHTML = text; // Using innerHTML to allow for simple formatting
+                conversation.appendChild(messageDiv);
+                conversation.scrollTop = conversation.scrollHeight;
+            }
+            
+            function downloadAnalysis() {
+                if (!reportAnalysis) {
+                    alert('No analysis to download');
+                    return;
+                }
+                
+                // Create a downloadable text file with the analysis
+                let content = `Medical Report Analysis\n\n`;
+                content += `Report Type: ${reportAnalysis.type}\n\n`;
+                content += `SUMMARY:\n${reportAnalysis.summary}\n\n`;
+                
+                if (reportAnalysis.parameters && reportAnalysis.parameters.length > 0) {
+                    content += `PARAMETERS:\n\n`;
+                    reportAnalysis.parameters.forEach(param => {
+                        content += `${param.name}: ${param.value} (${param.range}) - ${param.status}\n`;
+                        content += `Explanation: ${param.explanation}\n\n`;
+                    });
+                }
+                
+                // Add conversation history
+                const messages = conversation.querySelectorAll('.message');
+                if (messages.length > 0) {
+                    content += `CONVERSATION HISTORY:\n\n`;
+                    messages.forEach(msg => {
+                        const prefix = msg.classList.contains('user-message') ? 'You: ' : 'Doctor: ';
+                        content += `${prefix}${msg.textContent}\n\n`;
+                    });
+                }
+                
+                // Create download link
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `medical_report_analysis_${new Date().toISOString().slice(0,10)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+            
+            // Mock data generation functions (replace with real API calls in production)
+            function generateMockAnalysis(type) {
+                const mockData = {
+                    blood: {
+                        type: 'Blood Test Report',
+                        summary: `Your complete blood count (CBC) shows mostly normal results with a few parameters slightly outside the normal range. Your hemoglobin level is slightly low, which could indicate mild anemia. Your white blood cell count is normal, suggesting no current infection. Platelet count is within normal range, indicating normal blood clotting function.`,
+                        parameters: [
+                            {
+                                name: 'Hemoglobin (Hb)',
+                                value: '11.8 g/dL',
+                                range: '12.0 - 15.5 g/dL',
+                                status: 'Slightly Low',
+                                explanation: 'Slightly low hemoglobin may indicate mild anemia, which could be due to nutritional deficiencies (like iron or vitamin B12) or other factors.'
+                            },
+                            {
+                                name: 'White Blood Cells (WBC)',
+                                value: '6.5 × 10³/μL',
+                                range: '4.0 - 11.0 × 10³/μL',
+                                status: 'Normal',
+                                explanation: 'Normal WBC count suggests your body is not currently fighting an infection.'
+                            },
+                            {
+                                name: 'Platelets',
+                                value: '250 × 10³/μL',
+                                range: '150 - 450 × 10³/μL',
+                                status: 'Normal',
+                                explanation: 'Normal platelet count indicates your blood clotting function is working properly.'
+                            },
+                            {
+                                name: 'Red Blood Cells (RBC)',
+                                value: '4.2 × 10⁶/μL',
+                                range: '3.8 - 5.1 × 10⁶/μL',
+                                status: 'Normal',
+                                explanation: 'Your red blood cell count is within the normal range.'
+                            }
+                        ]
+                    },
+                    sugar: {
+                        type: 'Diabetes/Sugar Report',
+                        summary: `Your blood glucose levels show slightly elevated fasting glucose, which may indicate prediabetes. Your HbA1c level is in the prediabetes range. Postprandial (after meal) glucose is also slightly elevated. These results suggest you should monitor your sugar intake and consider lifestyle modifications.`,
+                        parameters: [
+                            {
+                                name: 'Fasting Blood Glucose',
+                                value: '110 mg/dL',
+                                range: '70 - 99 mg/dL',
+                                status: 'Elevated',
+                                explanation: 'Fasting glucose between 100-125 mg/dL suggests prediabetes. Consult your doctor for further evaluation.'
+                            },
+                            {
+                                name: 'HbA1c',
+                                value: '5.9%',
+                                range: 'Below 5.7%',
+                                status: 'Prediabetes',
+                                explanation: 'HbA1c between 5.7-6.4% indicates prediabetes. This reflects your average blood sugar over the past 2-3 months.'
+                            },
+                            {
+                                name: 'Postprandial Glucose',
+                                value: '145 mg/dL',
+                                range: 'Below 140 mg/dL',
+                                status: 'Elevated',
+                                explanation: 'Slightly elevated after-meal glucose. This should be below 140 mg/dL 2 hours after eating.'
+                            }
+                        ]
+                    },
+                    // Other report types would be added here...
+                    other: {
+                        type: 'Medical Report',
+                        summary: 'Your medical report has been analyzed. The results show a mix of normal and slightly abnormal values. Please consult with your healthcare provider for a detailed explanation of these results.',
+                        parameters: []
+                    }
+                };
+                
+                return mockData[type] || mockData.other;
+            }
+            
+            function generateMockAnswer(question, reportType) {
+                // This is a simplified mock - in a real app, you would use an AI model
+                // trained on medical data to generate accurate responses
+                
+                const commonAnswers = {
+                    "what does this mean": `Based on your ${reportType}, the results indicate ${reportType === 'blood' ? 'mostly normal values with a few slightly abnormal readings' : reportType === 'sugar' ? 'some elevated glucose levels that may suggest prediabetes' : 'a mix of normal and abnormal values'}. However, only your doctor can provide a complete interpretation based on your medical history.`,
+                    "is this normal": `Your report shows ${reportType === 'blood' ? 'mostly normal values with hemoglobin slightly low' : reportType === 'sugar' ? 'some elevated glucose levels' : 'a combination of normal and abnormal values'}. The detailed breakdown in the parameters table shows which specific values are outside normal ranges.`,
+                    "what should i do": `For ${reportType === 'blood' ? 'slightly low hemoglobin, consider iron-rich foods and consult your doctor' : reportType === 'sugar' ? 'elevated glucose levels, dietary changes and increased physical activity may help' : 'abnormal values, follow up with your healthcare provider'}. Always consult with a medical professional before making any health changes.`,
+                    "should i be worried": `Medical reports often contain values slightly outside normal ranges that may not be immediately concerning. However, ${reportType === 'blood' ? 'your slightly low hemoglobin should be discussed with your doctor' : reportType === 'sugar' ? 'your elevated glucose levels suggest prediabetes that should be monitored' : 'any abnormal results should be reviewed by your healthcare provider'}.`,
+                    "default": `I've analyzed your ${reportType} report. ${question} is an important question. Based on the results, ${reportType === 'blood' ? 'your blood parameters are mostly normal with a few exceptions' : reportType === 'sugar' ? 'your glucose levels show some elevation' : 'there are several findings that should be reviewed'}. For specific advice, please consult your doctor.`
+                };
+                
+                const lowerQuestion = question.toLowerCase();
+                
+                for (const [key, answer] of Object.entries(commonAnswers)) {
+                    if (lowerQuestion.includes(key)) {
+                        return answer;
+                    }
+                }
+                
+                return commonAnswers.default;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - MediCare Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7ff;
+            color: var(--dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            color: var(--secondary);
+            font-weight: 300;
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Team Section */
+        .team-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .team-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 350px;
+            box-shadow: var(--shadow);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--primary);
+            animation: slideInLeft 1s ease;
+        }
+
+        .team-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 1.5rem;
+            display: block;
+            border: 5px solid var(--primary);
+            transition: all 0.5s ease;
+        }
+
+        .team-card:hover .team-img {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .team-role {
+            text-align: center;
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-desc {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .social-link:hover {
+            background: var(--primary);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        /* Mission Section */
+        .mission-section {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            box-shadow: var(--shadow);
+            animation: fadeIn 1s ease 0.2s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .mission-text {
+            color: var(--secondary);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Skills Section */
+        .skills-section {
+            margin-bottom: 4rem;
+            animation: fadeIn 1s ease 0.4s both;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .skill-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .skill-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .skill-desc {
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 3rem;
+            box-shadow: var(--shadow);
+            animation: fadeIn 1s ease 0.6s both;
+        }
+
+        .contact-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #3a5bef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 107, 255, 0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { 
+                transform: translateX(-100%);
+            }
+            to { 
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from { 
+                transform: translateX(100%);
+            }
+            to { 
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .contact-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .team-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>About Us</h1>
+            <p class="subtitle">Meet the passionate developers behind MediCare Connect, dedicated to revolutionizing healthcare accessibility through technology.</p>
+        </header>
+
+        <div class="team-section">
+            <div class="team-card">
+                <img src="https://media.licdn.com/dms/image/v2/D5603AQGqFwmFLIRYmg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1729919277016?e=1756339200&v=beta&t=13OakGrP0A4dpidKumhDrnKGTUqeSDGbcdnHIV5tPsM" alt="Nikhil Shimpy" class="team-img">
+                <h2 class="team-name">Nikhil Shimpy</h2>
+                <p class="team-role">Co-Founder & Full Stack Developer</p>
+                <p class="team-desc">With over 5 years of experience in web & android App development & AIML, Nikhil specializes in creating seamless user experiences and robust backend systems.</p>
+                <div class="social-links">
+                    <a href="https://github.com/NikhilShimpy" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/nikhilshimpy/" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://x.com/NShimpy30982" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/nikhilshimpyy/?hl=en" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <img src="https://media.licdn.com/dms/image/v2/D5603AQEhrHEVeGWL7A/profile-displayphoto-shrink_800_800/B56ZNzB0X3GkAc-/0/1732801678615?e=1756339200&v=beta&t=jJ7u16jQ1of0Tek6sbgqwcEX_wbHoqW-coDvBU_Ruo4" alt="Harsh Vardhan Hatiya" class="team-img">
+                <h2 class="team-name">Harsh Vardhan Hatiya</h2>
+                <p class="team-role">Co-Founder & UI/UX Designer</p>
+                <p class="team-desc">Harsh brings innovative design solutions with 3 years of experience in creating intuitive interfaces that users love.</p>
+                <div class="social-links">
+                    <a href="https://github.com/Harsh147v" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/harshvardhan-hatiya-675128338/" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://github.com/Harsh147v" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/mehraharsh147/?hl=en" class="social-link"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mission-section">
+            <h2 class="section-title">Our Mission</h2>
+            <p class="mission-text">At MediCare Connect, we believe that healthcare should be accessible to everyone, anywhere, at any time. Our mission is to bridge the gap between patients and healthcare providers through innovative technology solutions.</p>
+            <p class="mission-text">We developed this platform to simplify the appointment booking process, reduce waiting times, and improve the overall healthcare experience for both patients and doctors.</p>
+            <p class="mission-text">Our vision is to become the most trusted healthcare platform, connecting millions of patients with qualified healthcare professionals across the country.</p>
+        </div>
+
+        <div class="skills-section">
+            <h2 class="section-title">Our Expertise</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3 class="skill-title">Web Development</h3>
+                    <p class="skill-desc">Modern, responsive web applications built with cutting-edge technologies like React, Node.js, and MongoDB.</p>
+                </div>
+                <div class="skill-card">
+                    <h3 class="skill-title">UI/UX Design</h3>
+                    <p class="skill-desc">Beautiful, intuitive interfaces designed with users in mind, following the latest design principles and trends.</p>
+                </div>
+                <div class="skill-card">
+                    <h3 class="skill-title">Healthcare Solutions</h3>
+                    <p class="skill-desc">Specialized in developing solutions that address real healthcare challenges with technology.</p>
+                </div>
+                <div class="skill-card">
+                    <h3 class="skill-title">Security & Compliance</h3>
+                    <p class="skill-desc">Ensuring all health data is protected with industry-standard security measures and compliance protocols.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-section">
+            <h2 class="section-title">Get In Touch</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" class="form-control" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email">
+                </div>
+                <div class="form-group full-width">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" class="form-control" placeholder="Enter subject">
+                </div>
+                <div class="form-group full-width">
+                    <label for="message">Message</label>
+                    <textarea id="message" class="form-control" rows="5" placeholder="Enter your message"></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation to team cards on scroll
+            const teamCards = document.querySelectorAll('.team-card');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeIn 1s ease forwards';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            teamCards.forEach(card => {
+                observer.observe(card);
+            });
+            
+            // Add hover effect to social links
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.animation = 'bounce 0.5s ease';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.animation = '';
+                });
+            });
+            
+            // Form submission
+            const contactForm = document.querySelector('.contact-form');
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Thank you for your message! We will get back to you soon.');
+                this.reset();
+            });
+        });
+    </script>
+</body>
+</html>

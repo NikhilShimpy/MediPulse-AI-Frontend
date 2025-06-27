@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Disease Detection</title>
+  <style>
+    body { font-family: Arial; padding: 30px; }
+    .container { max-width: 600px; margin: auto; }
+    .image-preview img { width: 100%; margin-top: 20px; }
+    .result { background: #f8f8f8; padding: 15px; margin-top: 20px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Skin Disease Detection (Acne)</h2>
+    <form action="/disease-detection" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*" required><br><br>
+      <button type="submit">Analyze</button>
+    </form>
+
+    {% if uploaded_image %}
+      <div class="image-preview">
+        <h3>Uploaded Image:</h3>
+        <img src="{{ url_for('static', filename='uploads/' + uploaded_image) }}" alt="Skin Image">
+      </div>
+    {% endif %}
+
+    {% if diagnosis %}
+      <div class="result">
+        <h3>Diagnosis: {{ diagnosis }}</h3>
+        <p><strong>Suggestions:</strong></p>
+        <ul>
+          {% for s in suggestions %}
+            <li>{{ s }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
