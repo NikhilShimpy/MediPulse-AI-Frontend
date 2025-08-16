@@ -6,7 +6,7 @@
 - **Nikhil Shimpy** – [@NikhilShimpy](https://github.com/NikhilShimpy)  
 - **Harsh Vardhan** – [@Harsh147v](https://github.com/Harsh147v)
 - **Palak Paithari** – [@palakpaithari](https://github.com/palakpaithari)
-- **Chetna Sikarwar** – [@chetnasingh31](https://github.com/chetnasingh31)
+
 ---
 
 ## 📌 Project Title  
