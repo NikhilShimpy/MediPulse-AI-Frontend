@@ -1,4 +1,13 @@
-# MediPulse AI  
+# MediPulse AI 
+
+---
+## 👥 Contributors
+
+- **Nikhil Shimpy** – [@NikhilShimpy](https://github.com/NikhilShimpy)  
+- **Harsh Vardhan** – [@Harsh147v](https://github.com/Harsh147v)
+- **Palak Paithari** – [@palakpaithari](https://github.com/palakpaithari)
+- **Chetna Sikarwar** – [@chetnasingh31](https://github.com/chetnasingh31)
+---
 
 ## 📌 Project Title  
 **MediPulse AI — Instant Hospital Finder & Smart Health Analyzer**  
@@ -25,7 +34,7 @@ With **geo-location hospital mapping, AI-powered dermatology scanning, blood rep
 - **Nikhil Shimpy** – Team Leader & Backend Developer  
 - **Harsh Vardhan Hatiya** – ML Engineer & AI Integration  
 - **Chetna Sikarwar** – Frontend Developer & UI/UX Designer  
-- **Palak Paithari** – Research & Documentation Lead  
+- **Palak Paithari** – Research & Documentation Lead
 
 ---
 
@@ -54,3 +63,116 @@ With **geo-location hospital mapping, AI-powered dermatology scanning, blood rep
    ```bash
    git clone https://github.com/yourusername/medipulse-ai.git
    cd medipulse-ai
+   ```
+2. Create a virtual environment:  
+   ```bash
+   python -m venv venv
+   source venv/bin/activate   # On Windows: venv\Scripts\activate
+   ```
+3. Install dependencies:  
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run the application:  
+   ```bash
+   flask run
+   ```
+
+---
+
+## 📖 Usage  
+1. Open the app in your browser at **http://127.0.0.1:5000/**.  
+2. Upload a **skin image** for AI dermatology detection.  
+3. Upload a **blood report PDF** for instant AI-powered interpretation.  
+4. Use the **Nearby Hospital Finder** to discover hospitals within 1–100 km.  
+5. Access **Emergency Mode** for urgent hospital navigation.  
+6. Interact with the **Chatbot** for health-related guidance.  
+
+---
+
+## ✨ Features Summary  
+- 🔎 **Nearby Hospital Finder** (with Emergency Mode)  
+- 🧑‍⚕️ **Medical Chatbot**  
+- 📷 **AI Skin Analyzer**  
+- 📑 **AI Report Interpreter**  
+- 🚨 **Emergency Mode** with quick hospital directions  
+
+---
+
+## ⚙️ Configuration  
+- Set up Google Maps API key in `.env` file:  
+  ```env
+  GOOGLE_MAPS_API_KEY=your_api_key_here
+  ```
+
+---
+
+## 📸 Screenshots / Demo  
+- **User Interface:**  
+  - Dashboard with options: Hospital Finder, Skin Analyzer, Report Interpreter, Chatbot  
+- **Workflow:**  
+  - Upload → AI Analysis → Feedback → Hospital Navigation  
+
+*(Add screenshots or demo video links here)*  
+
+---
+
+## 🖥️ Technologies Used  
+- **Frontend:** HTML, CSS, Bootstrap, JavaScript  
+- **Backend:** Python, Flask  
+- **Database:** SQLite  
+- **AI/ML:** TensorFlow, Keras, OpenCV, scikit-learn, PDF NLP  
+- **APIs:** Google Maps API, geopy, PyMuPDF  
+- **Deployment:** GitHub Pages, Render, Replit  
+
+---
+
+## 🤝 Contributing  
+1. Fork the repo  
+2. Create a feature branch:  
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Commit changes and push:  
+   ```bash
+   git commit -m "Added new feature"
+   git push origin feature-name
+   ```
+4. Open a Pull Request 🎉  
+
+---
+
+## ✅ Testing (Optional)  
+Run unit tests using:  
+```bash
+pytest
+```
+
+---
+
+## 🛤 Roadmap / Future Work  
+- 🎙 **Voice-Based Health Assistant** (LLMs like Whisper + GPT).  
+- 🏥 **EHR Integration** for syncing medical history across hospitals.  
+- 📈 **Real-Time Vitals Monitoring** from wearables.  
+- 🌍 **Multilingual Support** for global accessibility.  
+- 🧠 **Mental Health & Teleconsultation** integration.  
+
+---
+
+## 📜 License  
+This project is licensed under the **MIT License** – free to use, modify, and distribute.  
+
+---
+
+## 🙏 Acknowledgements / Credits  
+- Team **Fread Frenzy**  
+- TensorFlow, Keras, scikit-learn, Flask community  
+- Google Maps API, OpenCV  
+- Healthcare professionals for domain insights  
+
+---
+
+## 🔗 Links  
+- **GitHub Repo:** [https://github.com/NikhilShimpy/MediPulse-AI-Frontend/](#)   
+
+---
