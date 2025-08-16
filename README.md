@@ -42,7 +42,7 @@ With **geo-location hospital mapping, AI-powered dermatology scanning, blood rep
 |------------------|-----------------|
 | Frontend         | HTML, CSS, JavaScript, Bootstrap |
 | Backend          | Python (Flask) |
-| Database         | SQLite |
+| Database         | FireStore Database |
 | AI/ML Models     | TensorFlow/Keras, PDF NLP, Skin Image Classifier |
 | APIs/Libraries   | OpenCV, scikit-learn, geopy, Google Maps API, PyMuPDF |
 | Deployment       | GitHub Pages, Render, Replit |
