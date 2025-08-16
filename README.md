@@ -103,17 +103,7 @@ With **geo-location hospital mapping, AI-powered dermatology scanning, blood rep
 - Set up Google Maps API key in `.env` file:  
   ```env
   GOOGLE_MAPS_API_KEY=your_api_key_here
-  ```
-
----
-
-## 📸 Screenshots / Demo  
-- **User Interface:**  
-  - Dashboard with options: Hospital Finder, Skin Analyzer, Report Interpreter, Chatbot  
-- **Workflow:**  
-  - Upload → AI Analysis → Feedback → Hospital Navigation  
-
-*(Add screenshots or demo video links here)*  
+  ``` 
 
 ---
 
